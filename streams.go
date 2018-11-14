@@ -48,6 +48,13 @@ func (s IOStreams) SpinnerMsg(msg string) {
 	s.sp.Suffix = msg
 }
 
+// Close checks to see if any/all of in/out/errOut are closable,
+// and if so closes them
+func (s IOStreams) Close() error {
+	// TODO
+	return nil
+}
+
 // Print writes a msg to the Out stream
 func (s IOStreams) Print(msg string) {
 	if s.SpinnerActive() {
@@ -59,24 +66,30 @@ func (s IOStreams) Print(msg string) {
 
 // NewIOStreams creates streams
 func NewIOStreams(in io.Reader, out, errOut io.Writer) IOStreams {
+	sp := spinner.New(spinner.CharSets[24], 100*time.Millisecond)
+	sp.Writer = errOut
+
 	return IOStreams{
 		In:     in,
 		Out:    out,
 		ErrOut: errOut,
 
-		sp: spinner.New(spinner.CharSets[24], 100*time.Millisecond),
+		sp: sp,
 	}
 }
 
 // NewStdIOStreams creates a standard set of streams, with in, out, and error mapped
 // to os.Stdin, os.Stdout, and os.Stderr respectively
 func NewStdIOStreams() IOStreams {
+	sp := spinner.New(spinner.CharSets[24], 100*time.Millisecond)
+	sp.Writer = os.Stderr
+
 	return IOStreams{
 		In:     os.Stdin,
 		Out:    os.Stdout,
 		ErrOut: os.Stderr,
 
-		sp: spinner.New(spinner.CharSets[24], 100*time.Millisecond),
+		sp: sp,
 	}
 }
 
