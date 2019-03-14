@@ -1,5 +1,5 @@
 // Package ioes or "in, out, error streams" provides standard names and utilities
-// for working with traditional "stdout" streams
+// for working with traditional stdin/stdout/stderr streams.
 package ioes
 
 import (
@@ -55,13 +55,22 @@ func (s IOStreams) Close() error {
 	return nil
 }
 
-// Print writes a msg to the Out stream
+// Print writes a msg to the out stream, printing
 func (s IOStreams) Print(msg string) {
 	if s.SpinnerActive() {
 		s.StopSpinner()
 		defer s.StartSpinner()
 	}
 	s.Out.Write([]byte(msg))
+}
+
+// PrintErr writes a msg to the Err stream, printing
+func (s IOStreams) PrintErr(msg string) {
+	if s.SpinnerActive() {
+		s.StopSpinner()
+		defer s.StartSpinner()
+	}
+	s.ErrOut.Write([]byte(msg))
 }
 
 // NewIOStreams creates streams
