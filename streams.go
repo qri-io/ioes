@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/briandowns/spinner"
+	"github.com/mattn/go-isatty"
 )
 
 // IOStreams provides standard names for iostreams and common methods for managing
@@ -26,6 +27,26 @@ type IOStreams struct {
 	ErrOut io.Writer
 
 	sp *spinner.Spinner
+}
+
+// IsTerminal returns true when IOStreams Out is a terminal file descriptor
+func (s IOStreams) IsTerminal() bool {
+	if osOutFile, ok := s.Out.(*os.File); ok {
+		if osOutFile == os.Stdout {
+			return isatty.IsTerminal(osOutFile.Fd())
+		}
+	}
+	return false
+}
+
+// IsCygwinTerminal returns true when IOStreams Out is a Cygwin file descriptor
+func (s IOStreams) IsCygwinTerminal() bool {
+	if osOutFile, ok := s.Out.(*os.File); ok {
+		if osOutFile == os.Stdout {
+			return isatty.IsCygwinTerminal(osOutFile.Fd())
+		}
+	}
+	return false
 }
 
 // StartSpinner begins the progress spinner
