@@ -28,3 +28,12 @@ func TestSpinnerPrint(t *testing.T) {
 	s.Print("hallo!")
 	s.StopSpinner()
 }
+
+func TestIsNotATerminal(t *testing.T) {
+	str, _, _, _ := NewTestIOStreams()
+	if str.IsTerminal() {
+		t.Fatal("expected buffer streams to not be a terminal")
+	} else if str.IsCygwinTerminal() {
+		t.Fatal("expected buffer streams to not be a cygwin terminal")
+	}
+}
